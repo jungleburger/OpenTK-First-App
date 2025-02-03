@@ -46,7 +46,7 @@ namespace OpenTK.First.App.Core.Primitives
         public Vector2 Position { get; set; } = new Vector2(-0.5f, 0.0f); // Initial position away from the origin
         public Vector4 Color { get; set; } = new Vector4(0.0f, 1.0f, 0.0f, 1.0f); // Default color: Green
 
-        public Vector2[] Vertices => GetUniqueVertices();
+        public Vector2[] Vertices => GetTransformedVertices();
 
         public void Initialize()
         {
@@ -97,6 +97,9 @@ namespace OpenTK.First.App.Core.Primitives
 
             GL.BindVertexArray(_vertexArrayObject);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+
+            // Display the vertices in the console
+            DisplayVertices();
         }
 
         public void Cleanup()
@@ -106,15 +109,24 @@ namespace OpenTK.First.App.Core.Primitives
             GL.DeleteProgram(_shaderProgram);
         }
 
-        private Vector2[] GetUniqueVertices()
+        private Vector2[] GetTransformedVertices()
         {
-            return new Vector2[]
+            Vector2[] transformedVertices = new Vector2[_vertices.Length / 2];
+            for (int i = 0; i < _vertices.Length; i += 2)
             {
-                new Vector2(-0.1f, -0.1f),
-                new Vector2(0.1f, -0.1f),
-                new Vector2(0.1f, 0.1f),
-                new Vector2(-0.1f, 0.1f)
-            };
+                transformedVertices[i / 2] = new Vector2(_vertices[i], _vertices[i + 1]) + Position;
+            }
+            return transformedVertices;
+        }
+
+        private void DisplayVertices()
+        {
+            Vector2[] transformedVertices = GetTransformedVertices();
+            Console.WriteLine("Square Vertices:");
+            foreach (var vertex in transformedVertices)
+            {
+                Console.WriteLine($"({vertex.X}, {vertex.Y})");
+            }
         }
     }
 }

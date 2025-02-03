@@ -89,6 +89,9 @@ namespace OpenTK.First.App.Core.Primitives
 
             GL.BindVertexArray(_vertexArrayObject);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+
+            // Display the vertices in the console
+            DisplayVertices();
         }
 
         public void Cleanup()
@@ -100,12 +103,22 @@ namespace OpenTK.First.App.Core.Primitives
 
         private Vector2[] GetTransformedVertices()
         {
-            return new Vector2[]
+            Vector2[] transformedVertices = new Vector2[_vertices.Length / 2];
+            for (int i = 0; i < _vertices.Length; i += 2)
             {
-                new Vector2(-0.1f, -0.1f) + Position,
-                new Vector2(0.1f, -0.1f) + Position,
-                new Vector2(0.0f, 0.1f) + Position
-            };
+                transformedVertices[i / 2] = new Vector2(_vertices[i], _vertices[i + 1]) + Position;
+            }
+            return transformedVertices;
+        }
+
+        private void DisplayVertices()
+        {
+            Vector2[] transformedVertices = GetTransformedVertices();
+            Console.WriteLine("Triangle Vertices:");
+            foreach (var vertex in transformedVertices)
+            {
+                Console.WriteLine($"({vertex.X}, {vertex.Y})");
+            }
         }
     }
 }
