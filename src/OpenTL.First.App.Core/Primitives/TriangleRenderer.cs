@@ -1,10 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.First.App.Core.Collision;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using System.Drawing;
 using System.Linq;
 
 namespace OpenTK.First.App.Core.Primitives
 {
-    public class TriangleRenderer
+    public class TriangleRenderer : ICollidable
     {
         private int _vertexBufferObject;
         private int _vertexArrayObject;
@@ -39,6 +41,32 @@ namespace OpenTK.First.App.Core.Primitives
 
         public Vector2 Position { get; set; } = new Vector2(0.5f, 0.5f); // Initial position away from the origin
         public Vector2[] Vertices => GetTransformedVertices();
+        public RectangleF BoundingBox => ComputeBoundingBox();
+        public bool IsStatic { get; } // True if the object doesn't move
+
+        private Vector2[] _axes;
+        public Vector2[] Axes => _axes;
+
+        public bool IsDirty { get; private set; } = true;
+
+        public void Move(Vector2 newPosition)
+        {
+            Position = newPosition;
+            IsDirty = true;
+        }
+
+        public void UpdateAxes()
+        {
+            if (IsDirty)
+            {
+                int numVertices = Vertices.Length;
+                if (_axes == null || _axes.Length != numVertices)
+                    _axes = new Vector2[numVertices];
+
+                SATCollisionDetector.GetAxes(Vertices, _axes);
+                IsDirty = false;
+            }
+        }
 
         public void Initialize()
         {
@@ -74,6 +102,9 @@ namespace OpenTK.First.App.Core.Primitives
             // Get the location of the model matrix and color uniform
             _modelLocation = GL.GetUniformLocation(_shaderProgram, "model");
             _colorLocation = GL.GetUniformLocation(_shaderProgram, "color");
+
+            // Update axes after initialization
+            UpdateAxes();
         }
 
         public void Render()
@@ -104,12 +135,25 @@ namespace OpenTK.First.App.Core.Primitives
         private Vector2[] GetTransformedVertices()
         {
             Vector2[] transformedVertices = new Vector2[_vertices.Length / 2];
+
+            // Create the model matrix (same as in the shader)
+            Matrix4 model = Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0.0f));
+
             for (int i = 0; i < _vertices.Length; i += 2)
             {
-                transformedVertices[i / 2] = new Vector2(_vertices[i], _vertices[i + 1]) + Position;
+                // Original vertex
+                Vector4 vertex = new Vector4(_vertices[i], _vertices[i + 1], 0.0f, 1.0f);
+
+                // Transform the vertex using the model matrix
+                Vector4 transformedVertex = Vector4.TransformRow(vertex, model);
+
+                // Store the transformed vertex
+                transformedVertices[i / 2] = new Vector2(transformedVertex.X, transformedVertex.Y);
             }
+
             return transformedVertices;
         }
+
 
         private void DisplayVertices()
         {
@@ -119,6 +163,15 @@ namespace OpenTK.First.App.Core.Primitives
             {
                 Console.WriteLine($"({vertex.X}, {vertex.Y})");
             }
+        }
+        private RectangleF ComputeBoundingBox()
+        {
+            Vector2[] vertices = GetTransformedVertices();
+            float minX = vertices.Min(v => v.X);
+            float maxX = vertices.Max(v => v.X);
+            float minY = vertices.Min(v => v.Y);
+            float maxY = vertices.Max(v => v.Y);
+            return new RectangleF(minX, minY, maxX - minX, maxY - minY);
         }
     }
 }

@@ -4,7 +4,6 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.First.App.Core.Primitives;
-using System.Collections.Generic;
 using OpenTK.First.App.Core.Collision;
 
 namespace OpenTK.First.App.Core
@@ -54,9 +53,9 @@ namespace OpenTK.First.App.Core
             _squareRenderer.Render();
             _triangleRenderer.Render();
 
-            // Render the SAT visualization
+            // Render the SAT visualization (optional)
             _satCollisionDetector.RenderSATVisualization(_lineRenderer, _squareRenderer.Vertices, _triangleRenderer.Vertices);
-
+            
             SwapBuffers();
         }
 
@@ -88,15 +87,29 @@ namespace OpenTK.First.App.Core
                 newPosition += new Vector2(moveSpeed * deltaTime, 0.0f);
             }
 
+            // Get the transformed vertices at the new position
+            Vector2[] newSquareVertices = _squareRenderer.GetTransformedVerticesAtPosition(newPosition);
+
+            // Generate the axes for the new vertices
+            Vector2[] newAxes = new Vector2[newSquareVertices.Length];
+            SATCollisionDetector.GetAxes(newSquareVertices, newAxes);
+
+            // Create a temporary ICollidable representing the square at the new position
+            ICollidable tempSquare = new TemporaryCollidable(newSquareVertices, newAxes);
+
+            // Ensure the triangle's axes are up-to-date
+            _triangleRenderer.UpdateAxes();
+
             // Check for collision
-            if (_satCollisionDetector.IsColliding(newPosition, _squareRenderer.Vertices, _triangleRenderer.Vertices))
+            if (_satCollisionDetector.IsColliding(tempSquare, _triangleRenderer))
             {
                 _squareRenderer.Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f); // Red color on collision
             }
             else
             {
                 _squareRenderer.Color = new Vector4(0.0f, 1.0f, 0.0f, 1.0f); // Green color when no collision
-                _squareRenderer.Position = newPosition;
+                _squareRenderer.Position = newPosition; // Move the square
+                // No need to set IsDirty here; Position setter handles it
             }
 
             if (KeyboardState.IsKeyDown(Keys.Escape))
