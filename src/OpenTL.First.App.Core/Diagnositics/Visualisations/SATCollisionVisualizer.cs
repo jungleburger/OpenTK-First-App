@@ -2,7 +2,7 @@
 using OpenTK.First.App.Core.Primitives;
 using OpenTK.Mathematics;
 
-namespace OpenTK.First.App.Core.Debug.Visualisation
+namespace OpenTK.First.App.Core.Diagnostics.Visualisations
 {
     /// <summary>
     /// Visualizes the collision detection process using the Separating Axis Theorem (SAT).

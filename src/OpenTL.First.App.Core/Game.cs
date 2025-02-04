@@ -1,6 +1,6 @@
 ﻿using OpenTK.First.App.Core.Collision;
 using OpenTK.First.App.Core.Control.Keyboard;
-using OpenTK.First.App.Core.Debug.Visualisation;
+using OpenTK.First.App.Core.Diagnostics.Visualisations;
 using OpenTK.First.App.Core.Objects;
 using OpenTK.First.App.Core.Primitives;
 using OpenTK.Graphics.OpenGL4;
