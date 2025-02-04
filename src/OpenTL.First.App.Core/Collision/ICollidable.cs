@@ -8,7 +8,7 @@ namespace OpenTK.First.App.Core.Collision
         RectangleF BoundingBox { get; } // Axis-Aligned Bounding Box
         Vector2[] Vertices { get; }     // Transformed vertices
         Vector2[] Axes { get; }
-        bool IsDirty { get; } // Indicates if the shape has changed
+        bool IsDirty { get; set;  } // Indicates if the shape has changed
         void UpdateAxes();
     }
 }
