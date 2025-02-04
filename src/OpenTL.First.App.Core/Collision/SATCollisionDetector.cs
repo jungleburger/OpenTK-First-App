@@ -10,8 +10,8 @@ namespace OpenTK.First.App.Core.Collision
     public class SATCollisionDetector
     {
         // Preallocated arrays to minimize memory allocations
-        private Vector2[] _axes1;
-        private Vector2[] _axes2;
+        //private Vector2[] _axes1;
+        //private Vector2[] _axes2;
 
         public bool IsColliding(ICollidable shape1, ICollidable shape2)
         {
