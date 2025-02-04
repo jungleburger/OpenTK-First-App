@@ -27,7 +27,7 @@ namespace OpenTK.First.App.Core
         {
         }
 
-        protected override void OnLoad()
+        protected override void OnLoad() 
         {
             base.OnLoad();
 
