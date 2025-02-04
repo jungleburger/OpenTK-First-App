@@ -131,14 +131,14 @@ namespace OpenTK.First.App.Core.Primitives
 			// Get the location of the model matrix and color uniform
 			_modelLocation = GL.GetUniformLocation(_shaderProgram, "model");
 			_colorLocation = GL.GetUniformLocation(_shaderProgram, "color");
-        }
+		}
 
-        public override void Update(double deltaTime)
-        {
-            // Update logic if necessary...
-        }
+		public override void Update(double deltaTime)
+		{
+			// Update logic if necessary...
+		}
 
-        public override void Render()
+		public override void Render()
 		{
 			GL.UseProgram(_shaderProgram);
 
@@ -153,7 +153,7 @@ namespace OpenTK.First.App.Core.Primitives
 			GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
 			// Display the vertices in the console
-			DisplayVertices();
+			// DisplayVertices();
 		}
 
 		public override void Cleanup()

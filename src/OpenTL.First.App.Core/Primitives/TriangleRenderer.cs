@@ -105,14 +105,14 @@ namespace OpenTK.First.App.Core.Primitives
 
 			// Update axes after initialization
 			UpdateAxes();
-        }
+		}
 
-        public override void Update(double deltaTime)
-        {
-            // Update logic if necessary...
-        }
+		public override void Update(double deltaTime)
+		{
+			// Update logic if necessary...
+		}
 
-        public override void Render()
+		public override void Render()
 		{
 			GL.UseProgram(_shaderProgram);
 
@@ -127,10 +127,10 @@ namespace OpenTK.First.App.Core.Primitives
 			GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
 			// Display the vertices in the console
-			DisplayVertices();
+			// DisplayVertices();
 		}
 
-        public override void Cleanup()
+		public override void Cleanup()
 		{
 			GL.DeleteBuffer(_vertexBufferObject);
 			GL.DeleteVertexArray(_vertexArrayObject);
